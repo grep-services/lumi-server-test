@@ -1,0 +1,63 @@
+class UsersController < ApiBaseController
+    before_action :set_user, only: [:show, :edit, :update, :destroy]
+    skip_before_filter :require_valid_token, only: [:create, :activate]
+
+    def index
+        @users = User.all
+        render :json => @users
+    end
+
+    def show
+        if !@user
+            render :json => @user, status: :ok
+        else
+            render nothing: true, status: :not_found
+        end
+    end
+
+    def  create
+        @user = User.new(user_params)
+
+        if @user.save
+            render :json => @user, status: :created
+        else
+            render :json => @user.errors, status: :bad_request
+        end
+    end
+
+    def update
+        if @user.update(user_params)
+            render json: @user, status: :ok
+        else
+            render json: @user.errors, status: :unprocessable_entity
+        end
+    end
+
+    def destroy
+        if @user.destroy
+            render :json => @user, status: :ok
+        else
+            render :json => @user.errors, status: :bad_request
+        end
+    end
+
+    def activate
+        if (@user = User.load_from_activation_token(params[:id]))
+            @user.activate!
+            render :json => @user, status: :ok
+        else
+            render nothing: true, status: :not_found
+        end
+    end
+
+    private
+
+        def set_user
+            @user = User.find_by_id(params[:id])
+        end
+
+        def user_params
+            params.require(:user).permit(:email, :name, :password, :password_confirmation)
+        end
+    # => private
+end         #UserController
