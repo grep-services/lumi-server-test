@@ -28,7 +28,7 @@ class DevicesController < ApiBaseController
                 render noting: true, status: :bad_request
             end
         else
-            @error = 'wrong name params'
+            @error = 'Invalided url params'
             render "result/error", :formats => [:json], :handlers => [:jbuilder]
         end
     end

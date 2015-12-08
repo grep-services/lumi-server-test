@@ -17,9 +17,8 @@ class UsersController < ApiBaseController
     end
 
     def  create
-        @user = User.new(user_params)
-
-        if @user.save
+        if @user = User.new(user_params)
+            @user.save
             render :json => @user, status: :created
         else
             @error = 'wrong user params'
@@ -49,7 +48,7 @@ class UsersController < ApiBaseController
     def activate
         if (@user = User.load_from_activation_token(params[:id]))
             @user.activate!
-            render :json => @user, status: :ok
+            render "users/activate", :formats => [:html]
         else
             render nothing: true, status: :not_found
         end

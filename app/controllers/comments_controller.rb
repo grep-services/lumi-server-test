@@ -19,17 +19,14 @@ class CommentsController < ApiBaseController
     def update
         if @comment.update(comment_params)
             render :json => @comment
-            # redirect_to message_path(@message)
         else
             render nothing: true, status: :not_found
-            # render 'edit'
         end
     end
 
     def destroy
         @comment.destroy
         render nothing: true, status: :ok
-        # redirect_to message_path(@message)
     end
 
     private

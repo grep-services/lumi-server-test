@@ -7,13 +7,10 @@ class ApiBaseController < ApplicationController
             access_token = request.headers[:HTTP_ACCESS_TOKEN]
             if !User.login?(access_token)
                 @token = Token.find_by_access_token(access_token)
-                # render :json => @token
                 @error = 'Authorizated!! login please'
                 render "result/error", :formats => [:json], :handlers => [:jbuilder]
-
-                # render nothing: true, status: :unauthorized
             end
-        end
+        end         #require_valid_token
 
         def set_user
             access_token = request.headers[:HTTP_ACCESS_TOKEN]

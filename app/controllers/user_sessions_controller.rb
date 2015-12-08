@@ -7,13 +7,9 @@ class UserSessionsController < ApiBaseController
 
             token = @user.activate
             @access_token = token.access_token
-            # render :json => @user, nothing: true, status: :ok
-
-            render json: @user, root: false
+            render json: @user
 
         else
-            # @message = 'check your params!!!'
-            # render "api_base/authorization", :formats => [:json], :handlers => [:jbuilder]
             render nothing: true, status: :bad_request
         end
 
@@ -26,7 +22,6 @@ class UserSessionsController < ApiBaseController
             @user = User.find(token.user_id)
             logout
             @user.inactivate
-            # render "create", :formats => [:json], :handlers => [:jbuilder]
             render :json => @user, nothing: true, status: :ok
         else
             render nothing: true, status: :not_found

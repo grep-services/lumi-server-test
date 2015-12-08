@@ -31,17 +31,14 @@ class MessagesController < ApiBaseController
     def update
         if @message.update(message_params)
             render :json => @message
-            # redirect_to message_path
         else
             render nothing: true, status: :not_found
-            # render 'edit'
         end
     end
 
     def destroy
         @message.destroy
         render nothing: true, status: :ok
-        # redirect_to root_path
     end
 
     private

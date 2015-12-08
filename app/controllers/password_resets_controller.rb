@@ -1,12 +1,12 @@
 class PasswordResetsController < ApiBaseController
+    before_action :find_email, only: :create
+    before_filter :set_user
     skip_before_filter :require_valid_token
     
     def create
-        @user = User.find_by_email(params[:email])
-        @user.deliver_reset_password_instructions!
-
         if @user
-            render nothing: true, status: :create
+            @user.deliver_reset_password_instructions!
+            render nothing: true, status: :ok
         else
             render nothing: true, status: :not_found
         end
@@ -14,21 +14,24 @@ class PasswordResetsController < ApiBaseController
 
     def edit
         if set_token_user_from_params?
-            render nothing: true, status: :ok
+            render "password_resets/resets", :formats => [:html]
         else
             render nothing: true, status: :not_found
         end
     end
 
     def update
-        return if !set_token_user_from_params?
-        @user.password_confirmation = params[:user][:password_confirmation]
+        if @user.name = params[:id]
+            @user.password_confirmation = params[:user][:password_confirmation]
 
-        if @user.change_password!(params[:user][:password])
-            render nothing: true, status: :ok
+            if @user.change_password!(params[:user][:password])
+                render nothing: true, status: :ok
+            else
+                render nothing: true, status: :not_found
+            end
         else
-            render nothing: true, status: :not_found
-        end
+            @error = 'Invalided url params'
+            render "result/error", :formats => [:json], :handlers => [:jbuilder]
     end
 
     private
@@ -43,5 +46,10 @@ class PasswordResetsController < ApiBaseController
                 return true
             end
         end
+
+        def find_email
+            @user = User.find_by_email(params[:email])
+        end
+
     #private
 end         #PasswordResetsController
